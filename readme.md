@@ -1,4 +1,4 @@
-# Easy Web Encode
+# Easy Web Video Encode
 
 Easily encode nearly any video format into an MP4 and WEBM for browser streaming via 
 a simple shell script and FFmpeg -- without installing FFmpeg!
