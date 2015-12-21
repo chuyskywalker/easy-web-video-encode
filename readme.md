@@ -7,7 +7,7 @@ a simple shell script and FFmpeg -- without installing FFmpeg!
 
 I wanted to host some videos for a private site, and I wanted them to last indefinitely.
 Thus Youtube/Vimeo/etc were not really viable options. I found a great set or articles
-discussing how to encode for [webm][webmb] and [mp4][mp4] -- the two current required 
+discussing how to encode for [webm][webm] and [mp4][mp4] -- the two current required 
 video formats to cover _most_ browsers. I do not currently include ogg. Combined with 
 a bit of shell scripting, and you can easily turn any video that ffmpeg can read into
 a streamable asset.
