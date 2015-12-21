@@ -39,10 +39,15 @@ your original. You can then use this snippet in browsers to embed the video:
 </video>
 ```
 
-## Customization
+## Caveats
 
-I really only made this for my specific purposes; and it lacks a lot that something like
-Youtube/Vimeo/etc can deliver. There are only two formats it outputs. There is no flash
-fallback player. I don't support multiple resolutions. There's no concept of an overlay
-JS library to spruce up the whole affair. It's pretty basic, but it's a solid, working
-starting point.
+I really only made this for my specific purposes, so there are some caveats. The script:
+
+ * won't produce nearly as many options as something like Youtube/Vimeo/etc can deliver
+ * only outputs two formats (mp4/webm)
+ * there is no flash fallback player
+ * doesn't support multiple resolutions; hard coded to 720p at a relatively high bitrate
+ * has no concept of an overlay JS library to spruce up the whole affair
+
+Overall, if your userbase is limited and you can get away with it, this is basic enough
+to work for you. 
