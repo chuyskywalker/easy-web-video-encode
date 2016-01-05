@@ -22,15 +22,19 @@ echo "--- Encoding: $1"
 ROTATION=$(ffprobe $IN 2>&1 | \grep rotate | awk '{print $3}')
 if [ "$ROTATION" == "" ]; then
     # No rotation, use normal scale (height 720, width auto)
-    SCALE="-1:720"
+    VF="scale=-1:720"
     echo "--- No rotation detected"
 else
     # Rotated video; we need to specify the scale the other way around
     # to avoid a fatal "width not divisible by 2 (405x720)" error
     # Instead we'll use (height auto, width 720)
-    SCALE="720:-1"
+    VF="scale=720:-1"
     echo "--- Rotation detected; changed scale param"
 fi
+
+# Sometimes you need to force this if, for example, your video is sideways but doesn't contain that meta data
+#echo "!!! Forced scale + rotation"
+#VF="scale=-1:720,transpose=2"
 
 # Count cores, more than one? Use many!
 # Uses one less than total (recomendation for webm)
@@ -45,7 +49,7 @@ echo "--- Using $CORES threads for webm"
 echo "--- webm, First Pass"
 ffmpeg -i $IN \
     -hide_banner -loglevel error -stats \
-    -codec:v libvpx -threads $CORES -slices 4 -quality good -cpu-used 0 -b:v 1000k -qmin 10 -qmax 42 -maxrate 1000k -bufsize 2000k -vf scale=$SCALE \
+    -codec:v libvpx -threads $CORES -slices 4 -quality good -cpu-used 0 -b:v 1000k -qmin 10 -qmax 42 -maxrate 1000k -bufsize 2000k -vf $VF \
     -an \
     -pass 1 \
     -f webm \
@@ -54,7 +58,7 @@ ffmpeg -i $IN \
 echo "--- webm, Second Pass"
 ffmpeg -i $IN \
     -hide_banner -loglevel error -stats \
-    -codec:v libvpx -threads $CORES -slices 4 -quality good -cpu-used 0 -b:v 1000k -qmin 10 -qmax 42 -maxrate 1000k -bufsize 2000k -vf scale=$SCALE \
+    -codec:v libvpx -threads $CORES -slices 4 -quality good -cpu-used 0 -b:v 1000k -qmin 10 -qmax 42 -maxrate 1000k -bufsize 2000k -vf $VF \
     -codec:a libvorbis -b:a 128k \
     -pass 2 \
     -f webm \
@@ -63,7 +67,7 @@ ffmpeg -i $IN \
 echo "--- x264, First Pass"
 ffmpeg -i $IN \
     -hide_banner -loglevel error -stats \
-    -codec:v libx264 -threads 0 -profile:v main -preset slow -b:v 1000k -maxrate 1000k -bufsize 2000k -vf scale=$SCALE \
+    -codec:v libx264 -threads 0 -profile:v main -preset slow -b:v 1000k -maxrate 1000k -bufsize 2000k -vf $VF \
     -an \
     -pass 1 \
     -f mp4 \
@@ -72,7 +76,7 @@ ffmpeg -i $IN \
 echo "--- x264, Second Pass"
 ffmpeg -i $IN \
     -hide_banner -loglevel error -stats \
-    -codec:v libx264 -threads 0 -profile:v main -preset slow -b:v 1000k -maxrate 1000k -bufsize 2000k -vf scale=$SCALE \
+    -codec:v libx264 -threads 0 -profile:v main -preset slow -b:v 1000k -maxrate 1000k -bufsize 2000k -vf $VF \
     -codec:a libfdk_aac -b:a 128k \
     -pass 2 \
     -f mp4 \
@@ -86,7 +90,7 @@ docker run -t --rm \
   -w /tmp \
   --entrypoint='bash' \
   jrottenberg/ffmpeg@75bab46f78b9 \
-  /app/encode-inner.sh /app/$FILE
+  /app/encode-inner.sh /app/${FILE}
 
 # Remove that temp script
 rm -f encode-inner.sh
