@@ -33,8 +33,10 @@ else
 fi
 
 # Sometimes you need to force this if, for example, your video is sideways but doesn't contain that meta data
-#echo "!!! Forced scale + rotation"
-#VF="scale=-1:720,transpose=2"
+if [ "$FORCE" == "1" ]; then
+    echo "!!! Forced scale + rotation"
+    VF="scale=-1:720,transpose=2"
+fi
 
 # Count cores, more than one? Use many!
 # Uses one less than total (recomendation for webm)
@@ -86,6 +88,7 @@ EOF
 # Run the container. Note that we set the workingdir to /tmp since there are a few cruft files
 # the two stage encoding produces that we don't want to leave around in `pwd`
 docker run -t --rm \
+  -e "FORCE=$FORCE"\
   -v `pwd`:/app \
   -w /tmp \
   --entrypoint='bash' \
