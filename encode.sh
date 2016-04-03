@@ -92,7 +92,7 @@ docker run -t --rm \
   -v `pwd`:/app \
   -w /tmp \
   --entrypoint='bash' \
-  jrottenberg/ffmpeg@75bab46f78b9 \
+  jrottenberg/ffmpeg \
   /app/encode-inner.sh /app/${FILE}
 
 # Remove that temp script
